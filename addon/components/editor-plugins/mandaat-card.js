@@ -1,6 +1,7 @@
-import { reads } from '@ember/object/computed';
 import Component from '@ember/component';
 import layout from '../../templates/components/editor-plugins/mandaat-card';
+import { computed } from '@ember/object';
+import InsertResourceRelationCardMixin from '@lblod/ember-rdfa-editor-generic-model-plugin-utils/mixins/insert-resource-relation-card-mixin';
 
 /**
 * Card displaying a hint of the Date plugin
@@ -9,46 +10,38 @@ import layout from '../../templates/components/editor-plugins/mandaat-card';
 * @class MandaatCard
 * @extends Ember.Component
 */
-export default Component.extend({
+export default Component.extend(InsertResourceRelationCardMixin, {
   layout,
+  hintOwner: 'editor-plugins/mandaat-card',
 
-  /**
-   * Region on which the card applies
-   * @property location
-   * @type [number,number]
-   * @private
-  */
-  location: reads('info.location'),
+  serializeToJsonApi(resource){
+    //This is because we're not sure uri is kept (due to bug in mu-cl-resources/or ember-ds?)
+    const serializedResource = resource.serialize({includeId: true});
+    serializedResource.data.attributes.uri = resource.uri;
+    return serializedResource;
+  },
 
-  /**
-   * Unique identifier of the event in the hints registry
-   * @property hrId
-   * @type Object
-   * @private
-  */
-  hrId: reads('info.hrId'),
-
-  /**
-   * The RDFa editor instance
-   * @property editor
-   * @type RdfaEditor
-   * @private
-  */
-  editor: reads('info.editor'),
-
-  /**
-   * Hints registry storing the cards
-   * @property hintsRegistry
-   * @type HintsRegistry
-   * @private
-  */
-  hintsRegistry: reads('info.hintsRegistry'),
+  mandaatCombinedWithProperties: computed('info', function(){
+    return this.info.rdfaProperties.map(prop => {
+      return { mandaat: this.info.mandaat, prop: prop };
+    });
+  }),
 
   actions: {
-    insert(){
-      let mappedLocation = this.get('hintsRegistry').updateLocationToCurrentIndex(this.get('hrId'), this.get('location'));
-      this.get('hintsRegistry').removeHintsAtLocation(this.get('location'), this.get('hrId'), 'editor-plugins/mandaat-card');
-      this.get('editor').replaceTextWithHTML(...mappedLocation, this.get('info').htmlString);
+    async refer(data){
+      const mandaatJsonApi = this.serializeToJsonApi(data.mandaat);
+      const bestuursfunctie = await data.mandaat.bestuursfunctie;
+      const rdfaRefer = await this.getReferRdfa(await data.prop, mandaatJsonApi, bestuursfunctie.label);
+      const mappedLocation = this.hintsRegistry.updateLocationToCurrentIndex(this.hrId, this.location);
+      this.hintsRegistry.removeHintsAtLocation(this.location, this.get.hrId, this.hintOwner);
+      this.editor.replaceTextWithHTML(...mappedLocation, rdfaRefer, [{ who: this.hintOwner }]);
+    },
+    async extend(data){
+      const mandaatJsonApi = this.serializeToJsonApi(data.mandaat);
+      const rdfaRefer = await this.getReferRdfa(await data.prop, mandaatJsonApi);
+      const mappedLocation = this.hintsRegistry.updateLocationToCurrentIndex(this.hrId, this.location);
+      this.hintsRegistry.removeHintsAtLocation(this.location, this.get.hrId, this.hintOwner);
+      this.editor.replaceTextWithHTML(...mappedLocation, rdfaRefer, [{ who: this.hintOwner }]);
     }
   }
 });
