@@ -1,51 +1,17 @@
-ember-rdfa-editor-mandaat-plugin
-==============================================================================
+# @lblod/ember-rdfa-editor-mandaat-plugin
 
-[Short description of the addon.]
+RDFa editor plugin to insert mandaten in the editor.
 
-Installation
-------------------------------------------------------------------------------
+## Use
+In a context where a mandaat can be inserted, the plugin will try to hint based on the label of the bestuursfunctie code (e.g. 'voorzitter van de gemeenteraad').
+
+## Installation
+
+Install the plugin like an Ember addon in your host application.
 
 ```
-ember install ember-rdfa-editor-mandaat-plugin
+ember install @lblod/ember-rdfa-editor-mandaat-plugin.git
 ```
 
-
-Usage
-------------------------------------------------------------------------------
-
-[Longer description of how to use the addon in apps.]
-
-
-Contributing
-------------------------------------------------------------------------------
-
-### Installation
-
-* `git clone <repository-url>`
-* `cd ember-rdfa-editor-mandaat-plugin`
-* `npm install`
-
-### Linting
-
-* `npm run lint:hbs`
-* `npm run lint:js`
-* `npm run lint:js -- --fix`
-
-### Running tests
-
-* `ember test` – Runs the test suite on the current Ember version
-* `ember test --server` – Runs the test suite in "watch mode"
-* `ember try:each` – Runs the test suite against multiple Ember versions
-
-### Running the dummy application
-
-* `ember serve`
-* Visit the dummy application at [http://localhost:4200](http://localhost:4200).
-
-For more information on using ember-cli, visit [https://ember-cli.com/](https://ember-cli.com/).
-
-License
-------------------------------------------------------------------------------
-
-This project is licensed under the [MIT License](LICENSE.md).
+### Dispatcher configuration
+The plugin will automatically be added to the `default` and `all` profile in the editor's dispatcher configuration in `app/config/editor-profiles.js`.
