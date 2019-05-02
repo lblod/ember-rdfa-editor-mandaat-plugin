@@ -64,7 +64,7 @@ const RdfaEditorMandaatPlugin = Service.extend({
     if(cards.length > 0){
       hintsRegistry.addHints(hrId, this.who, cards);
     }
-  }).restartable(),
+  }),
 
   async detectRdfaPropertiesToUse(context){
     const lastTriple = context.context.slice(-1)[0] || {};
