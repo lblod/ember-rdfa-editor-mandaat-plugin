@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor-mandaat-plugin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "RDFa editor plugin to insert mandates in the editor",
   "keywords": [
     "ember-addon"
